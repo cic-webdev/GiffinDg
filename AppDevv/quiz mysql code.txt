@@ -1,0 +1,50 @@
+CREATE TABLE IF NOT EXISTS tblquiz (
+    quiz_id INT AUTO_INCREMENT PRIMARY KEY,
+    quiz_name VARCHAR(255) NOT NULL,
+    subject_id INT NOT NULL, -- New column for subject identifier
+    date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS tblquestions (
+    question_id INT AUTO_INCREMENT PRIMARY KEY,
+    quiz_id INT,
+    question_text TEXT NOT NULL,
+    question_type ENUM('identification', 'multiple-choice', 'true-false') NOT NULL,
+    FOREIGN KEY (quiz_id) REFERENCES tblquiz(quiz_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS tblchoices (
+    choice_id INT AUTO_INCREMENT PRIMARY KEY,
+    question_id INT,
+    choice_text TEXT NOT NULL,
+    is_correct BOOLEAN NOT NULL,
+    FOREIGN KEY (question_id) REFERENCES tblquestions(question_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS tbltruefalse (
+    tf_id INT AUTO_INCREMENT PRIMARY KEY,
+    question_id INT,
+    correct_answer ENUM('True', 'False') NOT NULL,
+    FOREIGN KEY (question_id) REFERENCES tblquestions(question_id) ON DELETE CASCADE
+);
+
+INSERT INTO tblquiz (quiz_name, subject_id, date_created, last_updated)
+VALUES ('General Knowledge Quiz', 1, NOW(), NOW());
+
+    INSERT INTO tblquestions (quiz_id, question_text, question_type)
+VALUES 
+    (1, 'What is the capital of Japan?', 'identification'),
+    (1, 'Which of these animals is a mammal?', 'multiple-choice'),
+    (1, 'Is the sun a star?', 'true-false');
+
+    INSERT INTO tblchoices (question_id, choice_text, is_correct)
+VALUES 
+    (2, 'Frog', FALSE),
+    (2, 'Shark', FALSE),
+    (2, 'Whale', TRUE),
+    (2, 'Eagle', FALSE);
+
+    INSERT INTO tbltruefalse (question_id, correct_answer)
+VALUES 
+    (3, 'True');
